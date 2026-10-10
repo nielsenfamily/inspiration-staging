@@ -92,9 +92,13 @@
     route() {
       const h = location.hash.replace(/^#\/?/, '');
       if (/access_token|error_description|type=recovery/.test(h)) return { view: 'library' };
-      const parts = h.split('/').filter(Boolean);
+      const parts = h.split('/').filter(Boolean).map(decodeURIComponent);
+      if (parts[0] === 'project' && parts[1] && parts[2] === 'atlas') return { view: 'atlas', projectId: parts[1], entryId: parts[3] || null };
       if (parts[0] === 'project' && parts[1]) return { view: 'project', projectId: parts[1], nodeId: parts[2] || null };
       if (parts[0] === 'backup') return { view: 'backup' };
+      if (parts[0] === 'bible') return { view: 'bible', ref: parts[1] || null };
+      if (parts[0] === 'templates') return { view: 'templates', designId: parts[1] || null, extra: parts[2] || null };
+      if (parts[0] === 'business') return { view: 'business' };
       return { view: 'library' };
     },
     go(hash) { if (location.hash === hash) App.render(); else location.hash = hash; },
@@ -102,8 +106,15 @@
     async render() {
       const r = App.route();
       if (window.Editor && r.view !== 'project') await Editor.close();
+      if (window.Atlas) await Atlas.flush();
+      if (window.Designs) await Designs.leave();
+      if (window.Business) await Business.leave();
       if (r.view === 'project') return Editor.open(r.projectId, r.nodeId);
+      if (r.view === 'atlas') return Atlas.open(r.projectId, r.entryId);
       if (r.view === 'backup') return Transfer.render();
+      if (r.view === 'bible') return Bible.open(r.ref);
+      if (r.view === 'templates') return Designs.open(r.designId, r.extra);
+      if (r.view === 'business') return Business.open();
       return App.renderLibrary();
     },
 
@@ -111,7 +122,7 @@
     topbar(opts) {
       opts = opts || {};
       return `<header class="topbar ${opts.cls || ''}">
-        <div class="tb-left">${opts.left || `<a class="wordmark" href="#/">${esc(C.APP_NAME)}</a>`}</div>
+        <div class="tb-left">${opts.left || `<a class="wordmark" href="#/">${esc(C.APP_NAME)}</a>${App.sectionNav(opts.section)}`}</div>
         <div class="tb-mid">${opts.mid || ''}</div>
         <div class="tb-right">
           <span class="update-pill ${updateReady ? '' : 'hidden'}"><button class="link" data-act="apply-update">Update ready, apply when you’re done</button></span>
@@ -121,6 +132,11 @@
           <button class="icon-btn" data-act="settings" title="Settings">${ICON.gear}<span>Settings</span></button>
         </div>
       </header>`;
+    },
+    sectionNav(current) {
+      const items = [['writing', '#/', 'Writing'], ['bible', '#/bible', 'Bible'], ['templates', '#/templates', 'Templates'], ['business', '#/business', 'Business']];
+      return `<nav class="section-nav" aria-label="Sections">${items.map(([id, href, label]) =>
+        `<a href="${href}" ${current === id ? 'aria-current="page"' : ''}>${label}</a>`).join('')}</nav>`;
     },
     bindTopbar() { App.paintStatus(); },
     _topbarClicks() {
@@ -263,7 +279,7 @@
         ? (all.length ? 'Nothing on the desk right now. Start something new, or bring a paused project back.' : 'Your shelf is ready. Start your first project.')
         : libFilter === 'archived' ? 'Archived projects will rest here. Nothing is ever thrown away.' : 'No projects here yet.'}</p>` : '';
 
-      $('#app').innerHTML = `${App.topbar({ right: `<a class="icon-btn" href="#/backup" title="Backup, export and import">${ICON.box}<span>Backup &amp; export</span></a>` })}
+      $('#app').innerHTML = `${App.topbar({ section: 'writing', right: `<a class="icon-btn" href="#/backup" title="Backup, export and import">${ICON.box}<span>Backup &amp; export</span></a>` })}
         <main class="library">
           <div id="banners"></div>
           <section class="lib-intro">

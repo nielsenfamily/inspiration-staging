@@ -4,7 +4,7 @@
 window.APP_CONFIG = {
   APP_NAME: 'Toolkit: Inspiration',
   TAGLINE: 'To God be the Glory',
-  VERSION: '1.0.0',
+  VERSION: '1.1.0',
   ENVIRONMENT: 'live',            // 'live' or 'staging' (staging shows a small badge)
 
   // From Supabase: Project Settings > API. Leave both blank to run in local-only test mode.

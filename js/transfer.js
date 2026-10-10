@@ -2,7 +2,7 @@
 (function () {
   const { $, $$, esc, fmt } = App;
   const C = window.APP_CONFIG;
-  const TABLES = ['projects', 'nodes', 'snapshots', 'writing_log', 'suggestions', 'settings'];
+  const TABLES = ['projects', 'nodes', 'snapshots', 'writing_log', 'suggestions', 'settings', 'entries'];
 
   const loaded = {};
   function loadScript(src) {
@@ -104,7 +104,7 @@
     if (!ok) return;
     let added = 0, kept = 0;
     const stamp = new Date(data.exported_at).toLocaleDateString();
-    for (const t of ['projects', 'nodes', 'snapshots', 'suggestions', 'writing_log']) {
+    for (const t of ['projects', 'nodes', 'snapshots', 'suggestions', 'writing_log', 'entries']) {
       for (const rec of (T[t] || [])) {
         const local = await DB.get(t, rec.id);
         if (!local || local.user_id !== Data.userId) {

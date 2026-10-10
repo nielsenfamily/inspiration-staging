@@ -72,6 +72,7 @@
           left: `<a class="icon-btn" href="#/" title="Back to your shelf">${ICON.shelf}<span>Library</span></a>
                  <button class="icon-btn only" data-ws="toggle-binder" title="Show or hide the outline">${ICON.panel}</button>
                  <button class="proj-name" data-ws="project" title="Project details">${esc(p.title)}</button>`,
+          mid: Atlas.switcher(p.id, 'manuscript'),
           right: `<button class="icon-btn" data-ws="focus" title="Focus mode (Ctrl+Shift+F)">${ICON.focus}<span>Focus</span></button>
                   <button class="icon-btn only" data-ws="toggle-inspector" title="Show or hide notes and history">${ICON.panel}</button>`
         })}
@@ -407,6 +408,9 @@
             <button class="tb-undo" title="Undo (Ctrl+Z)">${TB.undo}</button>
             <button class="tb-redo" title="Redo (Ctrl+Y)">${TB.redo}</button>
           </span>
+          <span class="tb-group">
+            <button class="tb-check" title="Check spelling and grammar">${TB.check}<span>Check</span></button>
+          </span>
         </div>
         <article class="page">
           <input class="doc-title" value="${esc(n.title || '')}" placeholder="Untitled" aria-label="Document title" maxlength="200">
@@ -439,6 +443,7 @@
       });
       $('.tb-undo').onclick = () => q.history.undo();
       $('.tb-redo').onclick = () => q.history.redo();
+      $('.tb-check').onclick = () => Grammar.open();
       const title = $('.doc-title');
       title.addEventListener('input', () => { n.title = title.value; S.metaDirty = true; Editor.saveMetaSoon(); const t = $(`.tn[data-id="${n.id}"] .tn-title`); if (t) t.textContent = n.title || 'Untitled'; });
       title.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.focus(); q.setSelection(0, 0); } });
@@ -637,7 +642,8 @@
     scene: ti('<path d="M5 12h.01M12 12h.01M19 12h.01"/><path d="M3 5h18M3 19h18" opacity=".35"/>'),
     clean: ti('<path d="M6 4h12M12 4l-3 16M4 20l16-16" />'),
     undo: ti('<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
-    redo: ti('<path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/>')
+    redo: ti('<path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/>'),
+    check: ti('<path d="M4 12l5 5L20 6"/>')
   };
 
   window.Editor = Editor;

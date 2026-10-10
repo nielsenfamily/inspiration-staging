@@ -5,12 +5,13 @@
 (function () {
   const C = window.APP_CONFIG;
   const COLUMNS = {
-    projects: ['id', 'user_id', 'title', 'subtitle', 'kind', 'status', 'word_goal', 'color', 'notes', 'sort_order', 'archived_at', 'created_at', 'rev'],
+    projects: ['id', 'user_id', 'title', 'subtitle', 'kind', 'status', 'word_goal', 'color', 'notes', 'dictionary', 'sort_order', 'archived_at', 'created_at', 'rev'],
     nodes: ['id', 'user_id', 'project_id', 'parent_id', 'kind', 'title', 'synopsis', 'notes', 'label', 'content', 'plain', 'word_count', 'sort_order', 'archived_at', 'created_at', 'rev'],
     snapshots: ['id', 'user_id', 'node_id', 'project_id', 'name', 'reason', 'content', 'word_count', 'created_at', 'rev'],
     writing_log: ['id', 'user_id', 'day', 'device', 'words', 'minutes', 'created_at', 'rev'],
     suggestions: ['id', 'user_id', 'body', 'status', 'reply', 'archived_at', 'created_at', 'rev'],
-    settings: ['id', 'user_id', 'prefs', 'last_backup_at', 'created_at', 'rev']
+    settings: ['id', 'user_id', 'prefs', 'last_backup_at', 'created_at', 'rev'],
+    entries: ['id', 'user_id', 'kind', 'project_id', 'subtype', 'title', 'body', 'data', 'sort_order', 'archived_at', 'created_at', 'rev']
   };
   const TABLES = Object.keys(COLUMNS);
 

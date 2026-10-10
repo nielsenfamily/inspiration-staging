@@ -2,8 +2,8 @@
    Nothing is ever deleted from the synced tables; items are archived instead. */
 (function () {
   const DB_NAME = 'inspiration';
-  const DB_VERSION = 1;
-  const SYNCED = ['projects', 'nodes', 'snapshots', 'writing_log', 'suggestions', 'settings'];
+  const DB_VERSION = 2;
+  const SYNCED = ['projects', 'nodes', 'snapshots', 'writing_log', 'suggestions', 'settings', 'entries'];
   let dbp = null;
 
   function open() {
@@ -26,6 +26,7 @@
         mk('outbox', { keyPath: 'key' });
         mk('meta', { keyPath: 'key' });
         mk('files', { keyPath: 'id' });
+        mk('entries', { keyPath: 'id' }, ['kind', 'project_id']);
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
@@ -106,6 +107,12 @@
     async nodes(projectId) {
       const list = await DB.byIndex('nodes', 'project_id', projectId);
       return list.filter(n => n.user_id === Data.userId);
+    },
+    /* Story Atlas entries, Bible notes, business notes, saved designs */
+    async entries(kind, projectId) {
+      const list = await DB.byIndex('entries', 'kind', kind);
+      return list.filter(e => e.user_id === Data.userId && (projectId === undefined || e.project_id === projectId))
+        .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0) || (a.created_at < b.created_at ? -1 : 1));
     },
     async snapshots(nodeId) {
       const list = await DB.byIndex('snapshots', 'node_id', nodeId);
