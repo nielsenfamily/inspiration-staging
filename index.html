@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Toolkit: Inspiration</title>
+  <meta name="description" content="A writing studio for Kayla.">
+  <meta name="theme-color" content="#2f4636">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="lib/quill.core.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="theme-parchment">
+  <div id="scene" aria-hidden="true"></div>
+  <div id="scene-dim" aria-hidden="true"></div>
+  <div id="app"></div>
+  <div id="modal-root"></div>
+  <div id="toasts" role="status" aria-live="polite"></div>
+
+  <script src="js/config.js"></script>
+  <script src="lib/supabase.js"></script>
+  <script src="lib/quill.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/scenes.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/transfer.js"></script>
+  <script>App.start();</script>
+</body>
+</html>
