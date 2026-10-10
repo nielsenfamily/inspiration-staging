@@ -180,7 +180,7 @@ label.range output { color: var(--muted); margin-left: 6px; }
 .tn-label { font-size: 11px; padding: 1px 6px; border-radius: 99px; border: 1px solid currentColor; opacity: .7; white-space: nowrap; }
 .tn-more { opacity: 0; background: none; border: 0; padding: 2px; cursor: pointer; color: inherit; border-radius: 4px; display: grid; }
 .tn:hover .tn-more, .tn.on .tn-more, .tn-more:focus { opacity: .8; }
-.tn-rename { flex: 1; min-width: 0; font-size: 14px; padding: 3px 6px; border: 1px solid var(--accent); border-radius: 4px; background: var(--surface-solid); }
+.tn-rename { flex: 1; min-width: 0; font-size: 14px; padding: 3px 6px; border: 1px solid var(--accent); border-radius: 4px; background: var(--surface-solid); color: var(--ink); }
 .tn.dragging { opacity: .4; }
 .tn.drop-before { box-shadow: inset 0 2px 0 var(--accent); } .tn.drop-after { box-shadow: inset 0 -2px 0 var(--accent); } .tn.drop-into { outline: 2px solid var(--accent); outline-offset: -2px; }
 .binder-foot { padding: 10px 14px; border-top: 1px solid var(--line); min-height: 41px; }

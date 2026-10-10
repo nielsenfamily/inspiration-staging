@@ -146,7 +146,7 @@
 
     renderBinder() {
       const tree = $('.tree');
-      if (!tree) return;
+      if (!tree || S.renaming) return;
       const row = (n, depth) => {
         const isF = n.kind === 'folder';
         const open = S.openFolders.has(n.id);
@@ -184,6 +184,11 @@
         const id = tn.dataset.id;
         if (e.target.closest('[data-caret]')) return Editor.toggleFolder(id);
         if (e.target.closest('[data-more]')) return Editor.nodeMenu(id, e.target.closest('[data-more]'));
+        // two quick clicks on the same item = rename (works even while the outline redraws)
+        const now = Date.now(), last = Editor._lastClick;
+        Editor._lastClick = { id, t: now };
+        if (last && last.id === id && now - last.t < 450 && !e.target.closest('button')) { Editor._lastClick = null; return Editor.renameInline(id); }
+        if (S.current && S.current.id === id) return; // already open (and keeps a double-click rename steady)
         await Editor.flush();
         App.go('#/project/' + S.project.id + '/' + id);
         if (innerWidth < 900) { S.binder = false; $('.ws').classList.add('no-binder'); }
@@ -315,16 +320,19 @@
       m.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b) { m.remove(); onPick(b.dataset.a); } });
     },
 
-    renameInline(id) {
+    renameInline(id, tries) {
       const tn = $(`.tn[data-id="${id}"] .tn-title`);
       const n = S.nodes.get(id);
-      if (!tn || !n) return;
+      if (!n) return;
+      if (!tn) { if ((tries || 0) < 5) setTimeout(() => Editor.renameInline(id, (tries || 0) + 1), 60); return; }
+      if (S.renaming) return;
+      S.renaming = true;
       const input = document.createElement('input');
       input.className = 'tn-rename'; input.value = n.title || '';
       tn.replaceWith(input); input.focus(); input.select();
       let done = false;
       const finish = async save => {
-        if (done) return; done = true;
+        if (done) return; done = true; S.renaming = false;
         if (save && input.value.trim() && input.value.trim() !== n.title) {
           n.title = input.value.trim();
           await Data.save('nodes', n, { quiet: true });
@@ -451,7 +459,7 @@
       Editor.renderInspector();
       Editor.paintStatus();
       $('.desk-scroll').scrollTop = 0;
-      if (n.title && n.title !== 'Untitled') setTimeout(() => q.focus(), 30);
+      if (n.title && n.title !== 'Untitled') setTimeout(() => { if (!S.renaming) q.focus(); }, 30);
     },
 
     insertSceneBreak() {
